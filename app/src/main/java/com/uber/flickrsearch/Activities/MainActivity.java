@@ -1,5 +1,6 @@
 package com.uber.flickrsearch.Activities;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,11 +16,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Fragment imageListFragment = new ImageListFragment();
+        Intent intent = new Intent(getApplication(), ImageSearchActivity.class);
+        startActivity(intent);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.activity_image_search_frame_layout, imageListFragment)
-                .commit();
+        finish();
     }
 }
