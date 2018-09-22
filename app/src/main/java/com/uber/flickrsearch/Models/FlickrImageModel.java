@@ -1,4 +1,4 @@
-package com.uber.flickrsearch;
+package com.uber.flickrsearch.Models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,7 +8,6 @@ public class FlickrImageModel {
     private String id, title, url;
 
     public FlickrImageModel(JSONObject object) {
-
         try {
             id = object.getString("id");
             String owner = object.getString("owner");
@@ -16,12 +15,11 @@ public class FlickrImageModel {
             String server = object.getString("server");
             int farm = object.getInt("farm");
             title = object.getString("title");
-            url = "http://farm" + farm + ".static.flickr.com/" + server +"/" + id + "_" + secret +" .jpg";
+            url = "http://farm" + farm + ".static.flickr.com/" + server +"/" + id + "_" + secret +".jpg";
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     public String getId() {

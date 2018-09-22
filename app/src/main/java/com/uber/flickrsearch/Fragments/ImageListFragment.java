@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.uber.flickrsearch.FlickrImageModel;
+import com.uber.flickrsearch.Models.FlickrImageModel;
 import com.uber.flickrsearch.R;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class ImageListFragment extends Fragment {
     private ImageListAdapter imageGridAdapter;
     private GridView imageGridView;
     private ImageListFragmentInterface mCallback;
+    private static final String TAG = "ImageListFragment";
+    private int preLast;
 
     public ImageListFragment() {
     }
@@ -58,12 +61,22 @@ public class ImageListFragment extends Fragment {
     }
 
     void setupEndlessListener() {
+
+
+
         imageGridView.setOnScrollListener(new AbsListView.OnScrollListener(){
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (firstVisibleItem + visibleItemCount >= totalItemCount){
-                    // End has been reached
-                    mCallback.onGridViewScrollEnd();
+
+                final int lastItem = firstVisibleItem + visibleItemCount;
+
+                if (lastItem == totalItemCount) {
+                    if (preLast != lastItem) { //to avoid multiple calls for last item
+                        preLast = lastItem;
+
+                        mCallback.onGridViewScrollEnd();
+                        Log.d(TAG, "Grid View Scrolled to end");
+                    }
                 }
             }
 
@@ -75,6 +88,11 @@ public class ImageListFragment extends Fragment {
 
     public void populateImages(ArrayList<FlickrImageModel> modelList) {
         imageModelList.addAll(modelList);
+        imageGridAdapter.notifyDataSetChanged();
+    }
+
+    public void clearImages() {
+        imageModelList.clear();
         imageGridAdapter.notifyDataSetChanged();
     }
 
@@ -117,6 +135,7 @@ public class ImageListFragment extends Fragment {
                 ImageView flickrImageView = convertView.findViewById(R.id.item_list_image_view);
 
                 String imageUrl = imageModel.getUrl();
+                //Log.d(TAG, "URL: " + imageUrl);
                 //TODO: Fill into flickrImageView
             }
 
