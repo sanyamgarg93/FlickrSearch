@@ -59,7 +59,7 @@ public class HTTPApiCallService {
             //Log.d("Response", "" + serverResponse);
 
             try {
-                if (mCallback != null)
+                if (mCallback != null && serverResponse != null)
                     mCallback.notifySuccess(new JSONObject(serverResponse));
             }
             catch (JSONException e) {

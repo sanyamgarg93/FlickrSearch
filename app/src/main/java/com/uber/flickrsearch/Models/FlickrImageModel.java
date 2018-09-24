@@ -15,7 +15,7 @@ public class FlickrImageModel {
             String server = object.getString("server");
             int farm = object.getInt("farm");
             title = object.getString("title");
-            url = "http://farm" + farm + ".static.flickr.com/" + server +"/" + id + "_" + secret +".jpg";
+            url = "http://farm" + farm + ".static.flickr.com/" + server +"/" + id + "_" + secret +"_s.jpg";
         }
         catch (JSONException e) {
             e.printStackTrace();

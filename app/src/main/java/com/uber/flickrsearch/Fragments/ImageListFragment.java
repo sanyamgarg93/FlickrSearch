@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.uber.flickrsearch.Models.FlickrImageModel;
 import com.uber.flickrsearch.R;
+import com.uber.flickrsearch.Utils.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -61,8 +62,6 @@ public class ImageListFragment extends Fragment {
     }
 
     void setupEndlessListener() {
-
-
 
         imageGridView.setOnScrollListener(new AbsListView.OnScrollListener(){
             @Override
@@ -123,23 +122,36 @@ public class ImageListFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            FlickrImageModel imageModel = flickrImageModelsList.get(position);
+
+            final ViewHolder viewHolder;
 
             if (convertView == null) {
-
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
                 if (inflater == null)
                     return null;
 
                 convertView = inflater.inflate(R.layout.item_list_image, parent, false);
-                ImageView flickrImageView = convertView.findViewById(R.id.item_list_image_view);
+                viewHolder = new ViewHolder();
+                viewHolder.imageView = convertView.findViewById(R.id.item_list_image_view);
+                convertView.setTag(viewHolder);
+            }
+            else {
+                viewHolder = (ViewHolder)convertView.getTag();
+            }
 
+            FlickrImageModel imageModel = flickrImageModelsList.get(position);
+
+            if (imageModel != null) {
                 String imageUrl = imageModel.getUrl();
-                //Log.d(TAG, "URL: " + imageUrl);
-                //TODO: Fill into flickrImageView
+                new ImageLoader(viewHolder.imageView, imageUrl);
             }
 
             return convertView;
         }
+    }
+
+    public class ViewHolder{
+        ImageView imageView;
     }
 }
