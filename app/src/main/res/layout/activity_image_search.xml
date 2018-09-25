@@ -46,7 +46,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/ic_search"
-            android:background="@android:color/transparent"
+            android:background="?android:selectableItemBackground"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:tint="@color/primary_dark_grey"

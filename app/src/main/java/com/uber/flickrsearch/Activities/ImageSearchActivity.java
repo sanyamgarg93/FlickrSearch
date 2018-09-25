@@ -1,9 +1,11 @@
 package com.uber.flickrsearch.Activities;
 
+import android.app.Activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -45,8 +47,11 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                 searchString = searchEditText.getText().toString();
                 if (!searchString.isEmpty()) {
                     imageListFragment.clearImages();
+
+                    apiPage = 1;
                     fetchFlickrImages();
                 }
+                hideKeyboard();
             }
         });
     }
@@ -58,7 +63,8 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                 "&nojsoncallback=1" +
                 "&safe_search=1" +
                 "&text=" + searchString +
-                "&page=" + apiPage;
+                "&page=" + apiPage +
+                "&per_page=20";
 
         HTTPApiCallInterface mResultCallback = new HTTPApiCallInterface() {
             @Override
@@ -101,5 +107,12 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
     @Override
     public void onGridViewScrollEnd() {
         fetchFlickrImages();
+    }
+
+    void hideKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager)this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+        if (inputMethodManager != null && this.getCurrentFocus() != null)
+            inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
     }
 }

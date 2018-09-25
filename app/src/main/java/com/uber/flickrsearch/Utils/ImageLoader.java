@@ -12,10 +12,10 @@ import java.net.URL;
 
 public class ImageLoader {
 
-    private ImageView imageView;
+    private final ImageView imageView;
     private static final String TAG = "ImageLoaderClass";
 
-    public ImageLoader(ImageView imageView, String imageUrl) {
+    public ImageLoader(final ImageView imageView, String imageUrl) {
         this.imageView = imageView;
         new BitmapFromURL().execute(imageUrl);
     }

@@ -53,7 +53,7 @@ public class ImageListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_image_list, container, false);
 
         imageGridView = rootView.findViewById(R.id.fragment_image_list_grid_view);
-        imageGridAdapter = new ImageListAdapter(getActivity(), imageModelList);
+        imageGridAdapter = new ImageListAdapter(imageModelList);
         imageGridView.setAdapter(imageGridAdapter);
 
         setupEndlessListener();
@@ -98,11 +98,9 @@ public class ImageListFragment extends Fragment {
     class ImageListAdapter extends BaseAdapter {
 
         private ArrayList<FlickrImageModel> flickrImageModelsList;
-        private Context context;
 
-        ImageListAdapter(Context mContext, ArrayList<FlickrImageModel> items) {
+        ImageListAdapter(ArrayList<FlickrImageModel> items) {
             this.flickrImageModelsList = items;
-            this.context = mContext;
         }
 
         @Override
@@ -112,7 +110,7 @@ public class ImageListFragment extends Fragment {
 
         @Override
         public Object getItem(int position) {
-            return flickrImageModelsList.get(position);
+            return null;
         }
 
         @Override
@@ -123,21 +121,17 @@ public class ImageListFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            final ViewHolder viewHolder;
+            ViewHolder viewHolder;
 
             if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-
-                if (inflater == null)
-                    return null;
-
-                convertView = inflater.inflate(R.layout.item_list_image, parent, false);
+                convertView = getLayoutInflater().inflate(R.layout.item_list_image, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.imageView = convertView.findViewById(R.id.item_list_image_view);
                 convertView.setTag(viewHolder);
             }
             else {
                 viewHolder = (ViewHolder)convertView.getTag();
+                //viewHolder.imageView.setImageBitmap(null);
             }
 
             FlickrImageModel imageModel = flickrImageModelsList.get(position);
