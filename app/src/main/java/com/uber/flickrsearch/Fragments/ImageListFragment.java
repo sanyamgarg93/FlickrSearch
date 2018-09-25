@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.uber.flickrsearch.Models.FlickrImageModel;
 import com.uber.flickrsearch.R;
@@ -25,6 +26,7 @@ public class ImageListFragment extends Fragment {
     private ArrayList<FlickrImageModel> imageModelList = new ArrayList<>();
     private ImageListAdapter imageGridAdapter;
     private GridView imageGridView;
+    private ProgressBar mainProgressBar;
     private ImageListFragmentInterface mCallback;
     private static final String TAG = "ImageListFragment";
     private int preLast;
@@ -56,6 +58,9 @@ public class ImageListFragment extends Fragment {
         imageGridAdapter = new ImageListAdapter(imageModelList);
         imageGridView.setAdapter(imageGridAdapter);
 
+        mainProgressBar = rootView.findViewById(R.id.fragment_image_list_progress_bar);
+        hideLoadingProgress();
+
         setupEndlessListener();
 
         return rootView;
@@ -66,6 +71,9 @@ public class ImageListFragment extends Fragment {
         imageGridView.setOnScrollListener(new AbsListView.OnScrollListener(){
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (totalItemCount == 0)
+                    return;
 
                 final int lastItem = firstVisibleItem + visibleItemCount;
 
@@ -88,11 +96,23 @@ public class ImageListFragment extends Fragment {
     public void populateImages(ArrayList<FlickrImageModel> modelList) {
         imageModelList.addAll(modelList);
         imageGridAdapter.notifyDataSetChanged();
+        hideLoadingProgress();
     }
 
     public void clearImages() {
         imageModelList.clear();
         imageGridAdapter.notifyDataSetChanged();
+        hideLoadingProgress();
+    }
+
+    public void displayLoadingProgress() {
+        if (imageModelList.size() == 0) {
+            mainProgressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    void hideLoadingProgress() {
+        mainProgressBar.setVisibility(View.GONE);
     }
 
     class ImageListAdapter extends BaseAdapter {

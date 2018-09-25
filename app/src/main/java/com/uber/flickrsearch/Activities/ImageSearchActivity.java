@@ -14,6 +14,7 @@ import com.uber.flickrsearch.Network.HTTPApiCallService;
 import com.uber.flickrsearch.Network.HTTPApiCallInterface;
 import com.uber.flickrsearch.Models.FlickrImageModel;
 import com.uber.flickrsearch.R;
+import com.uber.flickrsearch.Utils.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class ImageSearchActivity extends AppCompatActivity implements ImageListFragment.ImageListFragmentInterface{
 
-    private int apiPage = 1;
+    private int apiPage = 1, totalPages = 1;
     private ImageListFragment imageListFragment;
     private String searchString = null;
 
@@ -47,8 +48,10 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                 searchString = searchEditText.getText().toString();
                 if (!searchString.isEmpty()) {
                     imageListFragment.clearImages();
+                    ImageLoader.stopPendingTasks();
 
-                    apiPage = 1;
+                    // Reset api page ints
+                    apiPage = 1; totalPages = 1;
                     fetchFlickrImages();
                 }
                 hideKeyboard();
@@ -64,7 +67,7 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                 "&safe_search=1" +
                 "&text=" + searchString +
                 "&page=" + apiPage +
-                "&per_page=20";
+                "&per_page=50";
 
         HTTPApiCallInterface mResultCallback = new HTTPApiCallInterface() {
             @Override
@@ -79,6 +82,7 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
 
         HTTPApiCallService httpApiCallService = new HTTPApiCallService(mResultCallback);
         httpApiCallService.getHTTPApiData(url);
+        imageListFragment.displayLoadingProgress();
     }
 
     void parseAPIResponse(JSONObject response) {
@@ -98,6 +102,7 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
             imageListFragment.populateImages(flickrImageModels);
 
             apiPage = page + 1;
+            totalPages = pages;
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -106,7 +111,8 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
 
     @Override
     public void onGridViewScrollEnd() {
-        fetchFlickrImages();
+        if (apiPage <= totalPages)
+            fetchFlickrImages();
     }
 
     void hideKeyboard() {

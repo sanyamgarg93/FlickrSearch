@@ -35,7 +35,6 @@ public class HTTPApiCallService {
             try {
                 URL url = new URL(strings[0]);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
                 int responseCode = urlConnection.getResponseCode();
 
                 if(responseCode == HttpURLConnection.HTTP_OK){
