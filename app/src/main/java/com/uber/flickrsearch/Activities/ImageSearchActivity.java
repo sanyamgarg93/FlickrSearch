@@ -58,6 +58,9 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                     // 3. Fetch new info from flickr api
                     fetchFlickrImages();
                 }
+                else {
+                    Toast.makeText(getApplicationContext(), "Please provide non empty search string", Toast.LENGTH_LONG).show();
+                }
                 hideKeyboard();
             }
         });
@@ -82,6 +85,8 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
 
             @Override
             public void notifyError(JSONObject error) {
+                Toast.makeText(getApplicationContext(), "Internet not available", Toast.LENGTH_LONG).show();
+                imageListFragment.clearImages();
             }
         };
 

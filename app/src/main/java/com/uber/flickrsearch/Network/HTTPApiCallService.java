@@ -69,6 +69,8 @@ public class HTTPApiCallService {
                 if (mCallback != null && serverResponse != null)
                     // Inform calling activity about api success using interface
                     mCallback.notifySuccess(new JSONObject(serverResponse));
+                else if (mCallback != null && serverResponse == null)
+                    mCallback.notifyError(null);
             }
             catch (JSONException e) {
                 e.printStackTrace();
