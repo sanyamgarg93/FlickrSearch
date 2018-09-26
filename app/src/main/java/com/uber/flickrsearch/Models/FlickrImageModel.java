@@ -3,6 +3,12 @@ package com.uber.flickrsearch.Models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*
+ * Model class for parsing individual image information from
+ * the api.
+ * Provides methods to get image url, title, etc.
+ */
+
 public class FlickrImageModel {
 
     private String id, title, url;

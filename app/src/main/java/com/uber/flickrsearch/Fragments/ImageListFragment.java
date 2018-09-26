@@ -21,6 +21,17 @@ import com.uber.flickrsearch.Utils.ImageLoader;
 
 import java.util.ArrayList;
 
+/*
+ * ImageListFragment contains all functionality for displaying a list
+ * of images in a gridview.
+ *
+ * The adapter for populating the gridview is defined in class ImageListAdapter.
+ * Public methods for populating more images, clearing old images, displaying progress bar,
+ * are defined as well (To be called by parent activity)
+ *
+ * The fragment informs the parent activity whenever it requires new images
+ * for populating the gridview.
+ */
 public class ImageListFragment extends Fragment {
 
     private ArrayList<FlickrImageModel> imageModelList = new ArrayList<>();
@@ -35,6 +46,8 @@ public class ImageListFragment extends Fragment {
     }
 
     public interface ImageListFragmentInterface {
+        // Interface method for informing calling activity that
+        // the gridview has reached the bottom
         void onGridViewScrollEnd();
     }
 
@@ -100,6 +113,8 @@ public class ImageListFragment extends Fragment {
     }
 
     public void clearImages() {
+        cancelPendingConnections();
+
         imageModelList.clear();
         imageGridAdapter.notifyDataSetChanged();
         hideLoadingProgress();
@@ -165,7 +180,16 @@ public class ImageListFragment extends Fragment {
         }
     }
 
-    public class ViewHolder{
+    public class ViewHolder {
         ImageView imageView;
     }
+
+    /*
+     * Function to cancel all pending AsyncTasks that are currently
+     * downloading the bitmap data through HTTP connections.
+     */
+    void cancelPendingConnections() {
+        ImageLoader.stopPendingTasks();
+    }
+
 }

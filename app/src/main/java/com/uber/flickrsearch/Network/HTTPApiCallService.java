@@ -13,6 +13,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/*
+ * HTTPApiCallService class is used for fetching the response of an api call
+ * The class uses HTTPApiCallInterface to return the response to the calling
+ * activity.
+ * API String response is constructed by converting HTTP Byte response to String
+ * using StringBuilder. This process is performed inside an AsyncTask
+ */
 public class HTTPApiCallService {
 
     private HTTPApiCallInterface mCallback;
@@ -21,6 +28,7 @@ public class HTTPApiCallService {
         this.mCallback = mCallback;
     }
 
+    // Method called for executing the AsyncTask for fetching HTTP Response.
     public void getHTTPApiData(String url) {
         new HTTPApiCallAsync().execute(url);
     }
@@ -37,7 +45,7 @@ public class HTTPApiCallService {
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 int responseCode = urlConnection.getResponseCode();
 
-                if(responseCode == HttpURLConnection.HTTP_OK){
+                if (responseCode == HttpURLConnection.HTTP_OK) {
                     serverResponse = convertStreamToString(urlConnection.getInputStream());
                     //Log.d("Server Response: ", serverResponse);
                 }
@@ -59,6 +67,7 @@ public class HTTPApiCallService {
 
             try {
                 if (mCallback != null && serverResponse != null)
+                    // Inform calling activity about api success using interface
                     mCallback.notifySuccess(new JSONObject(serverResponse));
             }
             catch (JSONException e) {
@@ -67,7 +76,7 @@ public class HTTPApiCallService {
         }
     }
 
-    // Converting InputStream to String
+    // Converts InputStream to String
     private static String convertStreamToString(InputStream inputStream) {
 
         BufferedReader reader = null;

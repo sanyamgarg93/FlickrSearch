@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.uber.flickrsearch.Fragments.ImageListFragment;
 import com.uber.flickrsearch.Network.HTTPApiCallService;
@@ -33,6 +34,7 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_search);
 
+        // Attach fragment for displaying images to activities' frame layout
         imageListFragment = new ImageListFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -47,11 +49,13 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
             public void onClick(View v) {
                 searchString = searchEditText.getText().toString();
                 if (!searchString.isEmpty()) {
+                    // 1. Clear images already being displayed
                     imageListFragment.clearImages();
-                    ImageLoader.stopPendingTasks();
 
-                    // Reset api page ints
+                    // 2. Reset api page ints
                     apiPage = 1; totalPages = 1;
+
+                    // 3. Fetch new info from flickr api
                     fetchFlickrImages();
                 }
                 hideKeyboard();
@@ -69,6 +73,7 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
                 "&page=" + apiPage +
                 "&per_page=50";
 
+        // Initialize the interface and call getHTTPApiData method to fetch api response
         HTTPApiCallInterface mResultCallback = new HTTPApiCallInterface() {
             @Override
             public void notifySuccess(JSONObject response) {
@@ -82,6 +87,8 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
 
         HTTPApiCallService httpApiCallService = new HTTPApiCallService(mResultCallback);
         httpApiCallService.getHTTPApiData(url);
+
+        // Display progress bar until the api response is fetched
         imageListFragment.displayLoadingProgress();
     }
 
@@ -99,20 +106,38 @@ public class ImageSearchActivity extends AppCompatActivity implements ImageListF
             for (int i=0; i<photoList.length(); i++) {
                 flickrImageModels.add(new FlickrImageModel(photoList.getJSONObject(i)));
             }
+
+            // Pass the list of flickr image models to the fragment for displaying images
             imageListFragment.populateImages(flickrImageModels);
 
             apiPage = page + 1;
             totalPages = pages;
+
+            // Display a toast if no images are returned. // TODO: Replace with a "No images found" screen
+            if (photoList.length() == 0) {
+                Toast.makeText(getApplicationContext(), "No photos returned", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    /*
+     * Interface method triggered by ImageListFragment to indicate
+     * that the gridview has scrolled to the bottom. This function makes
+     * api call if apiPage <= totalPages
+     * Else, it displays a toast indicating that no more images are available.
+     */
     @Override
     public void onGridViewScrollEnd() {
         if (apiPage <= totalPages)
             fetchFlickrImages();
+        else {
+            // TODO: Replace with footer
+            Toast.makeText(getApplicationContext(), "Reached end of list", Toast.LENGTH_LONG).show();
+        }
     }
 
     void hideKeyboard() {
